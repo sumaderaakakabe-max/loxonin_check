@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<title>ロキソニン販売サポート</title>
+<style>
+  :root{
+    --navy:#0F2D52;
+    --navy-deep:#081b33;
+    --blue:#2F6FED;
+    --bg:#EEF2F7;
+    --card:#FFFFFF;
+    --ink:#1C2530;
+    --ink-soft:#5B6673;
+    --stop:#C8433D;
+    --stop-bg:#FDECEA;
+    --caution:#C6811A;
+    --caution-bg:#FDF2DF;
+    --ok:#2E7D53;
+    --ok-bg:#E7F4EC;
+    --line:#DCE3EC;
+    --radius:18px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Segoe UI",sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  #app{
+    width:100%;
+    max-width:480px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    background:var(--bg);
+  }
+  header{
+    background:linear-gradient(180deg,var(--navy) 0%, var(--navy-deep) 100%);
+    color:#fff;
+    padding:18px 20px 16px;
+    padding-top:calc(18px + env(safe-area-inset-top));
+    position:sticky;
+    top:0;
+    z-index:10;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .brand-dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--signal-color,#8FA3BE);
+    box-shadow:0 0 0 4px rgba(255,255,255,0.08);
+    transition:background .4s ease;
+    flex-shrink:0;
+  }
+  .brand h1{
+    font-size:16px;
+    font-weight:700;
+    margin:0;
+    letter-spacing:.02em;
+  }
+  .brand small{
+    display:block;
+    font-size:11px;
+    color:#A9BCDA;
+    font-weight:500;
+    margin-top:1px;
+  }
+  .progress{
+    display:flex;
+    gap:6px;
+    margin-top:14px;
+  }
+  .progress .seg{
+    flex:1;
+    height:4px;
+    border-radius:2px;
+    background:rgba(255,255,255,0.18);
+    overflow:hidden;
+  }
+  .progress .seg i{
+    display:block;
+    height:100%;
+    width:0%;
+    background:#fff;
+    transition:width .35s ease;
+  }
+  main{
+    flex:1;
+    padding:20px 18px 30px;
+  }
+  .card{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:22px 20px;
+    box-shadow:0 1px 2px rgba(15,45,82,0.06), 0 6px 20px rgba(15,45,82,0.06);
+    margin-bottom:16px;
+  }
+  .eyebrow{
+    font-size:12px;
+    font-weight:700;
+    color:var(--blue);
+    letter-spacing:.06em;
+    margin:0 0 8px;
+  }
+  h2{
+    font-size:20px;
+    line-height:1.4;
+    margin:0 0 6px;
+    font-weight:800;
+  }
+  .lead{
+    color:var(--ink-soft);
+    font-size:14px;
+    line-height:1.7;
+    margin:0 0 18px;
+  }
+  .signal-wrap{
+    display:flex;
+    justify-content:center;
+    margin:6px 0 22px;
+  }
+  .signal{
+    width:112px;height:112px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:#DCE3EC;
+    transition:background .5s ease, box-shadow .5s ease;
+    box-shadow:inset 0 0 0 8px rgba(255,255,255,0.5);
+  }
+  .signal svg{width:52px;height:52px;}
+  .signal.gray{background:#DCE3EC;}
+  .signal.stop{background:var(--stop);box-shadow:inset 0 0 0 8px rgba(255,255,255,0.25), 0 0 0 10px var(--stop-bg);}
+  .signal.caution{background:var(--caution);box-shadow:inset 0 0 0 8px rgba(255,255,255,0.25), 0 0 0 10px var(--caution-bg);}
+  .signal.ok{background:var(--ok);box-shadow:inset 0 0 0 8px rgba(255,255,255,0.25), 0 0 0 10px var(--ok-bg);}
+
+  .check-item{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:14px 4px;
+    border-bottom:1px solid var(--line);
+    cursor:pointer;
+  }
+  .check-item:last-child{border-bottom:none;}
+  .box{
+    flex-shrink:0;
+    width:24px;height:24px;
+    border-radius:7px;
+    border:2px solid #B7C2D2;
+    margin-top:1px;
+    display:flex;align-items:center;justify-content:center;
+    transition:all .15s ease;
+  }
+  .check-item.checked .box{
+    background:var(--blue);
+    border-color:var(--blue);
+  }
+  .check-item.stopmode.checked .box{
+    background:var(--stop);
+    border-color:var(--stop);
+  }
+  .box svg{width:14px;height:14px;opacity:0;transition:opacity .1s;}
+  .check-item.checked .box svg{opacity:1;}
+  .check-item span.label{
+    font-size:15px;
+    line-height:1.6;
+    padding-top:1px;
+  }
+  .sub{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-top:3px;
+    line-height:1.5;
+  }
+
+  .choice-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:4px;
+  }
+  .choice-grid.single{grid-template-columns:1fr;}
+  .choice{
+    border:2px solid var(--line);
+    border-radius:14px;
+    padding:14px 12px;
+    font-size:14px;
+    font-weight:600;
+    text-align:center;
+    color:var(--ink);
+    background:#fff;
+    cursor:pointer;
+    transition:all .12s ease;
+    line-height:1.4;
+  }
+  .choice.active{
+    border-color:var(--blue);
+    background:#EAF1FE;
+    color:var(--blue);
+  }
+
+  .btn-row{
+    display:flex;
+    gap:10px;
+    margin-top:8px;
+  }
+  button.primary{
+    flex:1;
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    padding:16px 18px;
+    border-radius:14px;
+    font-size:15.5px;
+    font-weight:700;
+    letter-spacing:.02em;
+  }
+  button.primary:disabled{
+    background:#B7C2D2;
+  }
+  button.ghost{
+    background:transparent;
+    border:2px solid var(--line);
+    color:var(--ink-soft);
+    padding:16px 16px;
+    border-radius:14px;
+    font-size:15px;
+    font-weight:600;
+  }
+  button.danger-outline{
+    background:transparent;
+    border:2px solid var(--stop);
+    color:var(--stop);
+  }
+  .product-card{
+    border:2px solid var(--line);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-bottom:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+  }
+  .product-card.rec{
+    border-color:var(--blue);
+    background:#F5F9FF;
+  }
+  .product-name{font-size:15px;font-weight:800;}
+  .product-tag{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+  .badge{
+    font-size:11px;
+    font-weight:700;
+    padding:4px 9px;
+    border-radius:999px;
+    background:var(--blue);
+    color:#fff;
+    white-space:nowrap;
+  }
+  ul.plain{margin:0;padding-left:18px;}
+  ul.plain li{font-size:14px;line-height:1.75;margin-bottom:4px;}
+  .warn-list{
+    background:var(--stop-bg);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-bottom:16px;
+  }
+  .warn-list.caution{background:var(--caution-bg);}
+  .warn-list p{margin:0 0 6px;font-weight:700;font-size:14px;color:var(--stop);}
+  .warn-list.caution p{color:var(--caution);}
+  .warn-list ul{margin:0;padding-left:18px;}
+  .warn-list li{font-size:13.5px;line-height:1.7;}
+  .ack{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    background:var(--caution-bg);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-bottom:16px;
+    cursor:pointer;
+  }
+  .ack .box{border-color:var(--caution);background:#fff;}
+  .ack.checked .box{background:var(--caution);}
+  .footer-note{
+    text-align:center;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    padding:10px 24px 4px;
+    line-height:1.6;
+  }
+  .dose-row{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
+    font-size:14px;
+  }
+  .dose-row:last-child{border-bottom:none;}
+  .dose-row b{font-weight:700;}
+  .summary-line{
+    display:flex;
+    justify-content:space-between;
+    font-size:13.5px;
+    padding:8px 0;
+    border-bottom:1px dashed var(--line);
+  }
+  .summary-line:last-child{border-bottom:none;}
+  .summary-line span:first-child{color:var(--ink-soft);}
+  .summary-line span:last-child{font-weight:700;}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand">
+      <div class="brand-dot" id="signalDot"></div>
+      <div>
+        <h1>ロキソニン販売サポート</h1>
+        <small id="stepLabel">お客様ごとの確認をサポートします</small>
+      </div>
+    </div>
+    <div class="progress" id="progress"></div>
+  </header>
+  <main id="main"></main>
+</div>
+
+<script>
+const PRODUCTS = [
+  {id:'s', name:'ロキソニンS', tag:'医療用成分を同量配合／ベーシック', dose:'1回1錠', drowsy:false, tablet:'直径9mmのうすい紅色の素錠', fit:['none']},
+  {id:'splus', name:'ロキソニンSプラス', tag:'胃にやさしい成分をプラス', dose:'1回1錠', drowsy:false, tablet:'直径8mmのうすい紅色のフィルムコーティング錠', fit:['stomach']},
+  {id:'quick', name:'ロキソニンSクイック', tag:'錠剤がすばやく崩壊／速さ重視', dose:'1回1錠', drowsy:false, tablet:'直径9mmの白色の素錠', fit:['fast']},
+  {id:'premium', name:'ロキソニンSプレミアム', tag:'つらい頭痛への独自処方（鎮痛補助成分配合）', dose:'1回2錠', drowsy:true, tablet:'直径8mmのうすい紅色のフィルムコーティング錠', fit:['headache']},
+  {id:'premiumfine', name:'ロキソニンSプレミアムファイン', tag:'生理痛のメカニズムに着目（鎮痛補助成分配合）', dose:'1回2錠', drowsy:false, tablet:'直径8mmのうすい紅色のフィルムコーティング錠', fit:['period']},
+  {id:'pro', name:'ロキソニンPROフィジカル', tag:'腰・肩の痛みに速効（鎮痛補助成分配合）', dose:'1回2錠', drowsy:false, tablet:'直径8mmのうすい紅色のフィルムコーティング錠', fit:['back']},
+];
+
+const CHECK_A = [
+  {t:'過去に本剤または本剤に含まれる成分でアレルギー症状等の過敏な反応を起こしたことがある'},
+  {t:'本剤または他の解熱鎮痛薬、かぜ薬を服用してぜんそくを起こしたことがある'},
+  {t:'15歳未満の小児'},
+  {t:'医療機関で治療中である', s:'胃・十二指腸潰瘍／肝臓病／腎臓病／心臓病'},
+  {t:'医師から血液の異常を指摘されている', s:'貧血（赤血球が少ない）／血小板が少ない／白血球が少ない'},
+  {t:'出産予定日12週以内の妊婦'},
+];
+
+const CHECK_B = [
+  {t:'医師または歯科医師の治療を受けている'},
+  {t:'妊婦（出産予定日12週以内を除く）、または妊娠していると思われる'},
+  {t:'授乳中である'},
+  {t:'高齢者（65歳以上）'},
+  {t:'薬などによりアレルギー症状を起こしたことがある'},
+  {t:'次の診断を受けたことがある', s:'気管支ぜんそく／潰瘍性大腸炎／クローン病／全身性エリテマトーデス／混合性結合組織病'},
+  {t:'次の病気にかかったことがある', s:'胃・十二指腸潰瘍／肝臓病／腎臓病／血液の病気'},
+];
+
+const STEPS = ['symptom','checklistA','checklistB','confirm'];
+
+let state = {
+  step: 'start',
+  symptom: null,
+  stomach: null,
+  fast: null,
+  driveOK: null,
+  checkedA: Array(CHECK_A.length).fill(false),
+  checkedB: Array(CHECK_B.length).fill(false),
+  ackB: false,
+  staff: null,
+};
+
+function reset(){
+  const keepStaff = state.staff; // same staff member likely serves the next customer too
+  state = {
+    step:'start', symptom:null, stomach:null, fast:null, driveOK:null,
+    checkedA:Array(CHECK_A.length).fill(false),
+    checkedB:Array(CHECK_B.length).fill(false),
+    ackB:false,
+    staff: keepStaff,
+  };
+  render();
+}
+
+function anyChecked(arr){ return arr.some(v=>v); }
+
+function recommend(){
+  if(state.symptom==='headache') return PRODUCTS.find(p=>p.id==='premium');
+  if(state.symptom==='period') return PRODUCTS.find(p=>p.id==='premiumfine');
+  if(state.symptom==='back') return PRODUCTS.find(p=>p.id==='pro');
+  if(state.fast==='fast') return PRODUCTS.find(p=>p.id==='quick');
+  if(state.stomach==='sensitive') return PRODUCTS.find(p=>p.id==='splus');
+  return PRODUCTS.find(p=>p.id==='s');
+}
+
+function setSignal(kind){
+  const dot = document.getElementById('signalDot');
+  const map = {gray:'#8FA3BE', stop:'#E98F8A', caution:'#F0C570', ok:'#8FD6AE'};
+  dot.style.background = map[kind] || map.gray;
+}
+
+function renderProgress(){
+  const idx = STEPS.indexOf(state.step);
+  const wrap = document.getElementById('progress');
+  wrap.innerHTML = '';
+  STEPS.forEach((s,i)=>{
+    const seg = document.createElement('div');
+    seg.className='seg';
+    const fill = document.createElement('i');
+    if(idx<0){ fill.style.width='0%'; }
+    else if(i<idx) fill.style.width='100%';
+    else if(i===idx) fill.style.width='55%';
+    else fill.style.width='0%';
+    seg.appendChild(fill);
+    wrap.appendChild(seg);
+  });
+}
+
+function el(html){
+  const d = document.createElement('div');
+  d.innerHTML = html.trim();
+  return d.firstChild;
+}
+
+// Appends ALL top-level nodes of an HTML string to a container (el() above
+// only returns the first one, which silently dropped later cards/buttons).
+function appendHTML(container, html){
+  const d = document.createElement('div');
+  d.innerHTML = html.trim();
+  while(d.firstChild){
+    container.appendChild(d.firstChild);
+  }
+}
+
+// ---- Local record-keeping (this browser only, no server, no personal identifiers) ----
+const RECORDS_KEY = 'loxonin_check_records_v1';
+
+function escapeHTML(s){
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function symptomLabel(v){
+  const map = {headache:'つらい頭痛', period:'つらい生理痛', back:'腰・肩の痛み', none:'その他・特になし'};
+  return map[v] || '未選択';
+}
+function stomachLabel(v){ return v==='sensitive' ? '気になる' : v==='ok' ? '気にならない' : '未確認'; }
+function fastLabel(v){ return v==='fast' ? '重視' : v==='normal' ? 'こだわらない' : '未確認'; }
+
+function loadRecords(){
+  try{
+    const raw = localStorage.getItem(RECORDS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){
+    console.error('records load error', e);
+    return [];
+  }
+}
+
+function saveRecord(entry){
+  try{
+    const records = loadRecords();
+    records.unshift(Object.assign({
+      id: Date.now() + '-' + Math.random().toString(36).slice(2,7),
+      datetime: new Date().toISOString(),
+    }, entry));
+    localStorage.setItem(RECORDS_KEY, JSON.stringify(records));
+  }catch(e){
+    console.error('records save error', e);
+  }
+}
+
+function clearRecords(){
+  try{ localStorage.removeItem(RECORDS_KEY); }catch(e){ console.error(e); }
+}
+
+function handleClearRecords(){
+  if(confirm('保存されている記録をすべて削除します。よろしいですか？（この操作は取り消せません）')){
+    clearRecords();
+    render();
+  }
+}
+
+function formatDateTime(iso){
+  const d = new Date(iso);
+  const pad = n=>String(n).padStart(2,'0');
+  return d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+}
+
+function downloadCSV(){
+  const records = loadRecords();
+  const headers = ['日時','対応者','結果','症状','胃の配慮','速効性重視','推奨商品','該当した禁忌項目','該当した要相談項目'];
+  const rows = records.map(r=>[
+    formatDateTime(r.datetime),
+    r.staff||'',
+    r.result||'',
+    r.symptom||'',
+    stomachLabel(r.stomach),
+    fastLabel(r.fast),
+    r.product||'',
+    (r.reasonsA||[]).join(' / '),
+    (r.reasonsB||[]).join(' / '),
+  ]);
+  const csvLines = [headers, ...rows].map(row=>
+    row.map(field=>{
+      const s = String(field==null?'':field);
+      if(/[",\n]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
+      return s;
+    }).join(',')
+  );
+  const csvContent = '\uFEFF' + csvLines.join('\r\n');
+  const blob = new Blob([csvContent], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const today = new Date();
+  const pad = n=>String(n).padStart(2,'0');
+  a.href = url;
+  a.download = 'loxonin_records_' + today.getFullYear()+pad(today.getMonth()+1)+pad(today.getDate()) + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function render(){
+  renderProgress();
+  const main = document.getElementById('main');
+  main.innerHTML = '';
+  const label = document.getElementById('stepLabel');
+
+  if(state.step==='start'){
+    setSignal('gray');
+    label.textContent = 'お客様ごとの確認をサポートします';
+    appendHTML(main, `
+      <div class="card">
+        <p class="eyebrow">START</p>
+        <h2>次のお客様のご案内を始めます</h2>
+        <p class="lead">症状の確認 → 販売可否のチェック → 商品のご案内、の順にすすみます。レジ横やカウンターでお客様と一緒にご覧いただく想定です。</p>
+        <label style="display:block;font-size:13px;font-weight:700;color:var(--ink-soft);margin-bottom:6px;">対応者（任意・記録に残ります）</label>
+        <input id="staffInput" type="text" placeholder="例：山田" value="${escapeHTML(state.staff||'')}" style="width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;font-size:15px;margin-bottom:16px;font-family:inherit;color:var(--ink);">
+        <div class="btn-row">
+          <button class="primary" onclick="goTo('symptom')">はじめる</button>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+          <div>
+            <p class="eyebrow" style="margin-bottom:2px;">RECORDS</p>
+            <div style="font-size:14px;font-weight:700;">これまでの確認記録</div>
+            <div class="product-tag" style="margin-top:2px;">この端末内にのみ保存されています</div>
+          </div>
+          <button class="ghost" style="padding:10px 16px;font-size:13.5px;white-space:nowrap;" onclick="goTo('records')">見る（${loadRecords().length}）</button>
+        </div>
+      </div>
+      <p class="footer-note">このアプリは接客の補助ツールです。最終的な販売可否・説明義務の判断は薬剤師・登録販売者が行ってください。</p>
+    `);
+    const staffInput = document.getElementById('staffInput');
+    staffInput.oninput = (e)=>{ state.staff = e.target.value; };
+    return;
+  }
+
+  if(state.step==='symptom'){
+    setSignal('gray');
+    label.textContent = 'ステップ 1／4：症状の確認';
+    appendHTML(main, `
+      <div class="card">
+        <p class="eyebrow">STEP 1</p>
+        <h2>どんな症状でお困りですか？</h2>
+        <p class="lead">お客様に伺いながら、当てはまるものをタップしてください（後で変更できます）。</p>
+        <div class="choice-grid" id="symptomGrid"></div>
+      </div>
+      <div class="card">
+        <p class="eyebrow">あわせて確認</p>
+        <div style="margin-bottom:14px;">
+          <p class="lead" style="margin-bottom:8px;">胃への負担が気になりますか？</p>
+          <div class="choice-grid" id="stomachGrid"></div>
+        </div>
+        <div>
+          <p class="lead" style="margin-bottom:8px;">できるだけ早く効かせたいですか？</p>
+          <div class="choice-grid" id="fastGrid"></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="ghost" onclick="goTo('start')">戻る</button>
+        <button class="primary" onclick="goTo('checklistA')">次へ：確認事項へ</button>
+      </div>
+    `);
+    const symptomOptions = [
+      {v:'headache', l:'つらい頭痛'},
+      {v:'period', l:'つらい生理痛'},
+      {v:'back', l:'腰・肩の痛み'},
+      {v:'none', l:'その他・特になし'},
+    ];
+    const sg = document.getElementById('symptomGrid');
+    symptomOptions.forEach(o=>{
+      const c = el(`<div class="choice ${state.symptom===o.v?'active':''}">${o.l}</div>`);
+      c.onclick = ()=>{ state.symptom = o.v; render(); };
+      sg.appendChild(c);
+    });
+    const stomachOptions = [{v:'sensitive',l:'気になる'},{v:'ok',l:'気にならない'}];
+    const stg = document.getElementById('stomachGrid');
+    stomachOptions.forEach(o=>{
+      const c = el(`<div class="choice ${state.stomach===o.v?'active':''}">${o.l}</div>`);
+      c.onclick = ()=>{ state.stomach=o.v; render(); };
+      stg.appendChild(c);
+    });
+    const fastOptions = [{v:'fast',l:'はい、重視したい'},{v:'normal',l:'こだわらない'}];
+    const fg = document.getElementById('fastGrid');
+    fastOptions.forEach(o=>{
+      const c = el(`<div class="choice ${state.fast===o.v?'active':''}">${o.l}</div>`);
+      c.onclick = ()=>{ state.fast=o.v; render(); };
+      fg.appendChild(c);
+    });
+    return;
+  }
+
+  if(state.step==='checklistA'){
+    setSignal('gray');
+    label.textContent = 'ステップ 2／4：服用できない方の確認';
+    appendHTML(main, `
+      <div class="card">
+        <p class="eyebrow">STEP 2 — 必須確認</p>
+        <h2>次に当てはまる方は服用できません</h2>
+        <p class="lead">1つでも当てはまる場合、このお薬はご購入・服用いただけません。お客様に一つずつ確認しながらタップしてください。</p>
+        <div id="listA"></div>
+      </div>
+      <div class="btn-row">
+        <button class="ghost" onclick="goTo('symptom')">戻る</button>
+        <button class="primary" onclick="handleAConfirm()">確認しました</button>
+      </div>
+    `);
+    const list = document.getElementById('listA');
+    CHECK_A.forEach((item,i)=>{
+      const row = el(`
+        <div class="check-item stopmode ${state.checkedA[i]?'checked':''}">
+          <div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+          <div>
+            <span class="label">${item.t}</span>
+            ${item.s? `<div class="sub">${item.s}</div>`:''}
+          </div>
+        </div>`);
+      row.onclick = ()=>{ state.checkedA[i] = !state.checkedA[i]; render(); };
+      list.appendChild(row);
+    });
+    return;
+  }
+
+  if(state.step==='stopA'){
+    setSignal('stop');
+    label.textContent = '販売不可';
+    appendHTML(main, `
+      <div class="card">
+        <div class="signal-wrap"><div class="signal stop"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg></div></div>
+        <h2 style="text-align:center;color:var(--stop);">このお客様には販売できません</h2>
+        <p class="lead" style="text-align:center;">該当した項目があるため、ロキソニン鎮痛薬シリーズはご購入いただけません。他の対応（医療機関の受診案内、他製品のご提案など）をご検討ください。</p>
+        <div class="warn-list">
+          <p>該当した項目</p>
+          <ul id="stopReasons"></ul>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="primary" onclick="reset()">次のお客様へ</button>
+      </div>
+      <p class="footer-note">判断に迷う場合は、必ず薬剤師・登録販売者にご相談ください。</p>
+    `);
+    const ul = document.getElementById('stopReasons');
+    CHECK_A.forEach((item,i)=>{ if(state.checkedA[i]) ul.appendChild(el(`<li>${item.t}</li>`)); });
+    return;
+  }
+
+  if(state.step==='checklistB'){
+    setSignal('gray');
+    label.textContent = 'ステップ 3／4：ご相談が必要な方の確認';
+    appendHTML(main, `
+      <div class="card">
+        <p class="eyebrow">STEP 3</p>
+        <h2>次に当てはまる方はご相談が必要です</h2>
+        <p class="lead">購入前に医師・歯科医師・薬剤師・登録販売者にご相談いただく必要がある項目です。当てはまるものをタップしてください。</p>
+        <div id="listB"></div>
+      </div>
+      <div class="btn-row">
+        <button class="ghost" onclick="goTo('checklistA')">戻る</button>
+        <button class="primary" onclick="handleBConfirm()">確認しました</button>
+      </div>
+    `);
+    const list = document.getElementById('listB');
+    CHECK_B.forEach((item,i)=>{
+      const row = el(`
+        <div class="check-item ${state.checkedB[i]?'checked':''}">
+          <div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+          <div>
+            <span class="label">${item.t}</span>
+            ${item.s? `<div class="sub">${item.s}</div>`:''}
+          </div>
+        </div>`);
+      row.onclick = ()=>{ state.checkedB[i] = !state.checkedB[i]; render(); };
+      list.appendChild(row);
+    });
+    return;
+  }
+
+  if(state.step==='cautionB'){
+    setSignal('caution');
+    label.textContent = '要注意：薬剤師・登録販売者によるご案内が必要です';
+    appendHTML(main, `
+      <div class="card">
+        <div class="signal-wrap"><div class="signal caution"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 9v4M12 17h.01M10.3 3.9L2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div></div>
+        <h2 style="text-align:center;color:var(--caution);">薬剤師・登録販売者によるご説明が必要です</h2>
+        <p class="lead" style="text-align:center;">販売はできますが、必ず薬剤師・登録販売者が内容を説明し、お客様の同意を得てから提供してください。</p>
+        <div class="warn-list caution">
+          <p>該当した項目</p>
+          <ul id="cautionReasons"></ul>
+        </div>
+        <div class="ack ${state.ackB?'checked':''}" id="ackRow">
+          <div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+          <span class="label">薬剤師・登録販売者が上記内容を説明し、お客様の了承を得ました</span>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="ghost" onclick="goTo('checklistB')">戻る</button>
+        <button class="primary" id="proceedBtn" onclick="goTo('confirm')">次へ：商品のご案内</button>
+      </div>
+    `);
+    const ul = document.getElementById('cautionReasons');
+    CHECK_B.forEach((item,i)=>{ if(state.checkedB[i]) ul.appendChild(el(`<li>${item.t}</li>`)); });
+    document.getElementById('ackRow').onclick = ()=>{ state.ackB = !state.ackB; render(); };
+    document.getElementById('proceedBtn').disabled = !state.ackB;
+    return;
+  }
+
+  if(state.step==='confirm'){
+    setSignal('ok');
+    label.textContent = 'ステップ 4／4：商品のご案内';
+    const rec = recommend();
+    appendHTML(main, `
+      <div class="card">
+        <div class="signal-wrap"><div class="signal ok"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg></div></div>
+        <h2 style="text-align:center;color:var(--ok);">ご購入いただけます</h2>
+        <p class="lead" style="text-align:center;">確認事項に問題はありませんでした。おすすめの商品をご案内します。</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">おすすめ</p>
+        <div id="productList"></div>
+      </div>
+      <div class="card" id="doseCard"></div>
+      <div class="card">
+        <p class="eyebrow">服用時の注意事項（必ずお伝えください）</p>
+        <ul class="plain">
+          <li>症状がある場合だけ服用し、なるべく空腹時を避けて、コップ1杯程度の水またはぬるま湯で服用</li>
+          <li>1日2回まで（再度必要な場合は3回目も可、服用間隔は4時間以上）</li>
+          <li>症状が改善したら服用を中止する</li>
+          <li>1〜2回服用しても改善しない場合、または3〜5日間服用しても症状が繰り返す場合は服用を中止し医師に相談</li>
+          <li>他の解熱鎮痛薬・かぜ薬・鎮静薬・乗物酔い薬（プレミアムのみ）と併用しない</li>
+          <li>服用前後の飲酒はしない</li>
+          <li>服用後、胃もたれ・胸やけ・背中の痛み・むくみが現れた場合は直ちに中止し医師に相談</li>
+        </ul>
+      </div>
+      <div class="btn-row">
+        <button class="ghost" onclick="goTo('checklistB')">戻る</button>
+        <button class="primary" onclick="finishRecord()">この内容で完了・次のお客様へ</button>
+      </div>
+      <p class="footer-note">実際にお渡しする際は、添付文書をよくお読みいただき、用法・用量を守って正しくお使いいただくようご案内ください。</p>
+    `);
+    const pl = document.getElementById('productList');
+    PRODUCTS.forEach(p=>{
+      const isRec = p.id===rec.id;
+      const row = el(`
+        <div class="product-card ${isRec?'rec':''}">
+          <div>
+            <div class="product-name">${p.name}</div>
+            <div class="product-tag">${p.tag}</div>
+          </div>
+          ${isRec?'<div class="badge">おすすめ</div>':''}
+        </div>`);
+      pl.appendChild(row);
+    });
+    const doseCard = document.getElementById('doseCard');
+    doseCard.appendChild(el(`<p class="eyebrow">${rec.name} の服用情報</p>`));
+    doseCard.appendChild(el(`<div class="dose-row"><span>1回の服用量</span><b>${rec.dose}</b></div>`));
+    doseCard.appendChild(el(`<div class="dose-row"><span>眠くなる成分</span><b>${rec.drowsy?'含む（運転注意）':'含まない'}</b></div>`));
+    doseCard.appendChild(el(`<div class="dose-row"><span>錠剤の特徴</span><b>${rec.tablet}</b></div>`));
+    if(rec.drowsy){
+      doseCard.appendChild(el(`<div class="warn-list caution" style="margin-top:12px;"><p>運転に関するご案内が必要です</p><ul><li>服用後、乗物または機械類の運転操作をしないようご案内ください（眠気があらわれることがあります）</li></ul></div>`));
+    }
+    return;
+  }
+
+  if(state.step==='records'){
+    setSignal('gray');
+    label.textContent = '記録一覧（この端末内のみ）';
+    const records = loadRecords();
+    appendHTML(main, `
+      <div class="card">
+        <p class="eyebrow">RECORDS</p>
+        <h2>これまでの確認記録</h2>
+        <p class="lead">この端末のブラウザ内にのみ保存されています。他のiPhoneやレジとは共有されません。バックアップが必要な場合はCSVをダウンロードしてください。</p>
+        <div class="btn-row">
+          <button class="primary" ${records.length===0?'disabled':''} onclick="downloadCSV()">CSVをダウンロード（${records.length}件）</button>
+        </div>
+        <div class="btn-row">
+          <button class="ghost danger-outline" ${records.length===0?'disabled':''} onclick="handleClearRecords()">記録をすべて削除</button>
+        </div>
+      </div>
+      <div id="recordList"></div>
+      <div class="btn-row">
+        <button class="ghost" onclick="goTo('start')">戻る</button>
+      </div>
+      <p class="footer-note">記録にはお客様の氏名など個人を特定できる情報は含めない設計にしています。対応者名は任意入力です。</p>
+    `);
+    const listWrap = document.getElementById('recordList');
+    if(records.length===0){
+      listWrap.appendChild(el(`<div class="card"><p class="lead" style="margin:0;">まだ記録はありません。</p></div>`));
+    } else {
+      records.forEach(r=>{
+        const isStop = r.result==='販売不可';
+        const isCaution = r.result && r.result.indexOf('要相談')===0;
+        const badgeColor = isStop ? 'var(--stop)' : isCaution ? 'var(--caution)' : 'var(--ok)';
+        const row = el(`
+          <div class="card" style="padding:16px 18px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+              <div>
+                <div style="font-weight:800;font-size:14px;">${formatDateTime(r.datetime)}</div>
+                <div class="product-tag" style="margin-top:2px;">${r.staff? '対応者：'+escapeHTML(r.staff) : '対応者：未記入'}${r.product? '　／　商品：'+escapeHTML(r.product):''}</div>
+              </div>
+              <div class="badge" style="background:${badgeColor};flex-shrink:0;">${escapeHTML(r.result||'')}</div>
+            </div>
+            ${(r.reasonsA&&r.reasonsA.length)? `<div class="sub" style="margin-top:8px;">禁忌: ${r.reasonsA.map(escapeHTML).join(' / ')}</div>`:''}
+            ${(r.reasonsB&&r.reasonsB.length)? `<div class="sub" style="margin-top:8px;">要相談: ${r.reasonsB.map(escapeHTML).join(' / ')}</div>`:''}
+          </div>`);
+        listWrap.appendChild(row);
+      });
+    }
+    return;
+  }
+}
+
+function goTo(step){
+  state.step = step;
+  render();
+  document.getElementById('app').scrollIntoView({behavior:'instant'});
+  window.scrollTo(0,0);
+}
+
+function handleAConfirm(){
+  if(anyChecked(state.checkedA)){
+    saveRecord({
+      result: '販売不可',
+      staff: state.staff || '',
+      symptom: symptomLabel(state.symptom),
+      stomach: state.stomach,
+      fast: state.fast,
+      product: '',
+      reasonsA: CHECK_A.filter((_,i)=>state.checkedA[i]).map(x=>x.t),
+      reasonsB: [],
+    });
+    goTo('stopA');
+  } else {
+    goTo('checklistB');
+  }
+}
+
+function handleBConfirm(){
+  if(anyChecked(state.checkedB)){
+    state.ackB = false;
+    goTo('cautionB');
+  } else {
+    goTo('confirm');
+  }
+}
+
+function finishRecord(){
+  const rec = recommend();
+  saveRecord({
+    result: anyChecked(state.checkedB) ? '要相談（説明済み）' : '販売OK',
+    staff: state.staff || '',
+    symptom: symptomLabel(state.symptom),
+    stomach: state.stomach,
+    fast: state.fast,
+    product: rec.name,
+    reasonsA: [],
+    reasonsB: CHECK_B.filter((_,i)=>state.checkedB[i]).map(x=>x.t),
+  });
+  reset();
+}
+
+render();
+</script>
+</body>
+</html>
